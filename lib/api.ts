@@ -44,15 +44,41 @@ export const schemaColumnApi = {
   },
 
   // PUT: Update existing column
-  async updateColumn(id: number, column: Partial<CreateSchemaColumn>): Promise<SchemaColumn> {
+  async updateColumn(id: number, column: CreateSchemaColumn): Promise<SchemaColumn> {
+    const updateData = {
+      columnId: id,
+      baseCategory: column.baseCategory,
+      seriesId: column.seriesId, // Don't default to 0, keep undefined/null
+      field: column.field,
+      title: column.title,
+      colType: column.colType,
+      editable: column.editable,
+      values: column.values || "",
+    }
+
+    console.log("[v0] Updating column with ID:", id)
+    console.log("[v0] Update data being sent:", JSON.stringify(updateData, null, 2))
+
     const response = await fetch(`${API_BASE_URL}/schema/columns/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(column),
+      body: JSON.stringify(updateData),
     })
-    return handleResponse<SchemaColumn>(response)
+
+    console.log("[v0] Update response status:", response.status)
+    console.log("[v0] Update response headers:", Object.fromEntries(response.headers.entries()))
+
+    if (!response.ok) {
+      const errorText = await response.text()
+      console.log("[v0] Update error response:", errorText)
+      throw new ApiError(response.status, `HTTP error! status: ${response.status}, body: ${errorText}`)
+    }
+
+    const result = await response.json()
+    console.log("[v0] Update successful, response:", result)
+    return result
   },
 
   // DELETE: Delete column

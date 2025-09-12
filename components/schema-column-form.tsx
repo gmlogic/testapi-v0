@@ -1,8 +1,7 @@
 "use client"
 
 import type React from "react"
-
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -22,17 +21,43 @@ const COLUMN_TYPES = ["string", "number", "boolean", "date", "datetime", "text",
 
 export function SchemaColumnForm({ column, onSubmit, onCancel, isLoading }: SchemaColumnFormProps) {
   const [formData, setFormData] = useState<CreateSchemaColumn>({
-    baseCategory: column?.baseCategory || 0,
-    seriesId: column?.seriesId || undefined,
-    field: column?.field || "",
-    title: column?.title || "",
-    colType: column?.colType || "string",
-    editable: column?.editable ?? true,
-    values: column?.values || "",
+    baseCategory: 0,
+    seriesId: null,
+    field: "",
+    title: "",
+    colType: "string",
+    editable: true,
+    values: "",
   })
+
+  useEffect(() => {
+    if (column) {
+      console.log("[v0] Loading column data into form:", column) // Added debug log
+      setFormData({
+        baseCategory: column.baseCategory || 0,
+        seriesId: column.seriesId || null,
+        field: column.field || "",
+        title: column.title || "",
+        colType: column.colType || "string",
+        editable: column.editable ?? true,
+        values: column.values || "",
+      })
+    } else {
+      setFormData({
+        baseCategory: 0,
+        seriesId: null,
+        field: "",
+        title: "",
+        colType: "string",
+        editable: true,
+        values: "",
+      })
+    }
+  }, [column])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    console.log("[v0] Form submission data:", formData) // Added debug log
     await onSubmit(formData)
   }
 
@@ -56,7 +81,7 @@ export function SchemaColumnForm({ column, onSubmit, onCancel, isLoading }: Sche
             type="number"
             value={formData.seriesId || ""}
             onChange={(e) =>
-              setFormData({ ...formData, seriesId: e.target.value ? Number.parseInt(e.target.value) : undefined })
+              setFormData({ ...formData, seriesId: e.target.value ? Number.parseInt(e.target.value) : null })
             }
           />
         </div>

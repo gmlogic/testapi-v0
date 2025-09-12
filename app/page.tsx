@@ -63,6 +63,10 @@ export default function SchemaColumnsPage() {
   const handleUpdateColumn = async (data: CreateSchemaColumn) => {
     if (!editingColumn) return
 
+    console.log("[v0] Starting update for column:", editingColumn)
+    console.log("[v0] Column ID from editingColumn:", editingColumn.columnId)
+    console.log("[v0] Form data to update:", data)
+
     try {
       await schemaColumnApi.updateColumn(editingColumn.columnId, data)
       toast({
@@ -73,7 +77,7 @@ export default function SchemaColumnsPage() {
       setEditingColumn(null)
       await loadColumns(currentFilters.baseId, currentFilters.seriesId)
     } catch (error) {
-      console.error("Failed to update column:", error)
+      console.error("[v0] Failed to update column:", error)
       toast({
         title: "Error",
         description:
@@ -105,6 +109,8 @@ export default function SchemaColumnsPage() {
   }
 
   const handleEdit = (column: SchemaColumn) => {
+    console.log("[v0] Edit button clicked for column:", column)
+    console.log("[v0] Column ID:", column.columnId)
     setEditingColumn(column)
     setIsDialogOpen(true)
   }
