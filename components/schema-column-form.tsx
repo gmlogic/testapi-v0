@@ -22,13 +22,13 @@ const COLUMN_TYPES = ["string", "number", "boolean", "date", "datetime", "text",
 
 export function SchemaColumnForm({ column, onSubmit, onCancel, isLoading }: SchemaColumnFormProps) {
   const [formData, setFormData] = useState<CreateSchemaColumn>({
-    BaseCategory: column?.BaseCategory || 0,
-    SeriesId: column?.SeriesId || undefined,
-    Field: column?.Field || "",
-    Title: column?.Title || "",
-    ColType: column?.ColType || "string",
-    Editable: column?.Editable ?? true,
-    Values: column?.Values || "",
+    baseCategory: column?.baseCategory || 0,
+    seriesId: column?.seriesId || undefined,
+    field: column?.field || "",
+    title: column?.title || "",
+    colType: column?.colType || "string",
+    editable: column?.editable ?? true,
+    values: column?.values || "",
   })
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -44,8 +44,8 @@ export function SchemaColumnForm({ column, onSubmit, onCancel, isLoading }: Sche
           <Input
             id="baseCategory"
             type="number"
-            value={formData.BaseCategory}
-            onChange={(e) => setFormData({ ...formData, BaseCategory: Number.parseInt(e.target.value) || 0 })}
+            value={formData.baseCategory}
+            onChange={(e) => setFormData({ ...formData, baseCategory: Number.parseInt(e.target.value) || 0 })}
             required
           />
         </div>
@@ -54,9 +54,9 @@ export function SchemaColumnForm({ column, onSubmit, onCancel, isLoading }: Sche
           <Input
             id="seriesId"
             type="number"
-            value={formData.SeriesId || ""}
+            value={formData.seriesId || ""}
             onChange={(e) =>
-              setFormData({ ...formData, SeriesId: e.target.value ? Number.parseInt(e.target.value) : undefined })
+              setFormData({ ...formData, seriesId: e.target.value ? Number.parseInt(e.target.value) : undefined })
             }
           />
         </div>
@@ -66,8 +66,8 @@ export function SchemaColumnForm({ column, onSubmit, onCancel, isLoading }: Sche
         <Label htmlFor="field">Field Name</Label>
         <Input
           id="field"
-          value={formData.Field}
-          onChange={(e) => setFormData({ ...formData, Field: e.target.value })}
+          value={formData.field}
+          onChange={(e) => setFormData({ ...formData, field: e.target.value })}
           maxLength={50}
           required
         />
@@ -77,8 +77,8 @@ export function SchemaColumnForm({ column, onSubmit, onCancel, isLoading }: Sche
         <Label htmlFor="title">Title</Label>
         <Input
           id="title"
-          value={formData.Title}
-          onChange={(e) => setFormData({ ...formData, Title: e.target.value })}
+          value={formData.title}
+          onChange={(e) => setFormData({ ...formData, title: e.target.value })}
           maxLength={100}
           required
         />
@@ -86,7 +86,7 @@ export function SchemaColumnForm({ column, onSubmit, onCancel, isLoading }: Sche
 
       <div className="space-y-2">
         <Label htmlFor="colType">Column Type</Label>
-        <Select value={formData.ColType} onValueChange={(value) => setFormData({ ...formData, ColType: value })}>
+        <Select value={formData.colType} onValueChange={(value) => setFormData({ ...formData, colType: value })}>
           <SelectTrigger>
             <SelectValue placeholder="Select column type" />
           </SelectTrigger>
@@ -103,8 +103,8 @@ export function SchemaColumnForm({ column, onSubmit, onCancel, isLoading }: Sche
       <div className="flex items-center space-x-2">
         <Checkbox
           id="editable"
-          checked={formData.Editable}
-          onCheckedChange={(checked) => setFormData({ ...formData, Editable: checked as boolean })}
+          checked={formData.editable}
+          onCheckedChange={(checked) => setFormData({ ...formData, editable: checked as boolean })}
         />
         <Label htmlFor="editable">Editable</Label>
       </div>
@@ -113,8 +113,8 @@ export function SchemaColumnForm({ column, onSubmit, onCancel, isLoading }: Sche
         <Label htmlFor="values">Values (Optional)</Label>
         <Textarea
           id="values"
-          value={formData.Values || ""}
-          onChange={(e) => setFormData({ ...formData, Values: e.target.value })}
+          value={formData.values || ""}
+          onChange={(e) => setFormData({ ...formData, values: e.target.value })}
           placeholder="Enter comma-separated values for select types"
           rows={3}
         />

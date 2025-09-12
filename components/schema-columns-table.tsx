@@ -39,27 +39,27 @@ export function SchemaColumnsTable({ columns, onEdit, onDelete, isLoading }: Sch
             </TableRow>
           ) : (
             columns.map((column) => (
-              <TableRow key={column.ColumnId}>
-                <TableCell className="font-medium">{column.ColumnId}</TableCell>
-                <TableCell className="font-mono text-sm">{column.Field}</TableCell>
-                <TableCell>{column.Title}</TableCell>
+              <TableRow key={column.columnId}>
+                <TableCell className="font-medium">{column.columnId}</TableCell>
+                <TableCell className="font-mono text-sm">{column.field}</TableCell>
+                <TableCell>{column.title}</TableCell>
                 <TableCell>
-                  <Badge variant="secondary">{column.ColType}</Badge>
+                  <Badge variant="secondary">{column.colType}</Badge>
                 </TableCell>
-                <TableCell>{column.BaseCategory}</TableCell>
-                <TableCell>{column.SeriesId || "-"}</TableCell>
+                <TableCell>{column.baseCategory}</TableCell>
+                <TableCell>{column.seriesId || "-"}</TableCell>
                 <TableCell>
-                  <Badge variant={column.Editable ? "default" : "outline"}>{column.Editable ? "Yes" : "No"}</Badge>
+                  <Badge variant={column.editable ? "default" : "outline"}>{column.editable ? "Yes" : "No"}</Badge>
                 </TableCell>
-                <TableCell className="max-w-32 truncate" title={column.Values}>
-                  {column.Values || "-"}
+                <TableCell className="max-w-32 truncate" title={column.values}>
+                  {column.values || "-"}
                 </TableCell>
                 <TableCell className="text-right">
                   <div className="flex justify-end space-x-2">
                     <Button variant="outline" size="sm" onClick={() => onEdit(column)} disabled={isLoading}>
                       <Edit className="h-4 w-4" />
                     </Button>
-                    <Button variant="outline" size="sm" onClick={() => onDelete(column.ColumnId)} disabled={isLoading}>
+                    <Button variant="outline" size="sm" onClick={() => onDelete(column.columnId)} disabled={isLoading}>
                       <Trash2 className="h-4 w-4" />
                     </Button>
                   </div>

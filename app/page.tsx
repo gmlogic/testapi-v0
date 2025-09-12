@@ -64,7 +64,7 @@ export default function SchemaColumnsPage() {
     if (!editingColumn) return
 
     try {
-      await schemaColumnApi.updateColumn(editingColumn.ColumnId, data)
+      await schemaColumnApi.updateColumn(editingColumn.columnId, data)
       toast({
         title: "Success",
         description: "Column updated successfully",

@@ -1,20 +1,20 @@
 export interface SchemaColumn {
-  ColumnId: number
-  BaseCategory: number
-  SeriesId?: number
-  Field: string
-  Title: string
-  ColType: string
-  Editable?: boolean
-  Values?: string
+  columnId: number
+  baseCategory: number
+  seriesId?: number
+  field: string
+  title: string
+  colType: string
+  editable?: boolean
+  values?: string
 }
 
 export interface CreateSchemaColumn {
-  BaseCategory: number
-  SeriesId?: number
-  Field: string
-  Title: string
-  ColType: string
-  Editable?: boolean
-  Values?: string
+  baseCategory: number
+  seriesId?: number
+  field: string
+  title: string
+  colType: string
+  editable?: boolean
+  values?: string
 }
