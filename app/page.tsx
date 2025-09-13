@@ -7,12 +7,12 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { useToast } from "@/hooks/use-toast"
 import { Toaster } from "@/components/ui/toaster"
 import { Plus, RefreshCw } from "lucide-react"
+import { Filters } from "@/components/filters" // Import Filters component
+import { SchemaColumnsTable } from "@/components/schema-columns-table" // Import SchemaColumnsTable component
+import { SchemaColumnForm } from "@/components/schema-column-form" // Import SchemaColumnForm component
 
 import type { SchemaColumn, CreateSchemaColumn } from "@/types/schema-column"
-import { schemaColumnApi, ApiError } from "@/lib/api"
-import { SchemaColumnsTable } from "@/components/schema-columns-table"
-import { SchemaColumnForm } from "@/components/schema-column-form"
-import { Filters } from "@/components/filters"
+import { schemaColumnApi, ApiError, setApiBaseUrl } from "@/lib/api"
 
 export default function SchemaColumnsPage() {
   const [columns, setColumns] = useState<SchemaColumn[]>([])
@@ -20,7 +20,26 @@ export default function SchemaColumnsPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [editingColumn, setEditingColumn] = useState<SchemaColumn | null>(null)
   const [currentFilters, setCurrentFilters] = useState<{ baseId?: number; seriesId?: number }>({})
+  const [apiUrl, setApiUrl] = useState<string>("")
   const { toast } = useToast()
+
+  useEffect(() => {
+    fetch("/config.json", { cache: "no-store" })
+      .then((res) => res.json())
+      .then((cfg) => {
+        setApiUrl(cfg.API_URL)
+        setApiBaseUrl(cfg.API_URL)
+        console.log("[v0] Loaded API URL from config:", cfg.API_URL)
+      })
+      .catch((err) => {
+        console.error("[v0] Failed to load config.json:", err)
+        toast({
+          title: "Warning",
+          description: "Failed to load API configuration, using default URL",
+          variant: "destructive",
+        })
+      })
+  }, [])
 
   const loadColumns = async (baseId?: number, seriesId?: number) => {
     setIsLoading(true)
@@ -121,8 +140,10 @@ export default function SchemaColumnsPage() {
   }
 
   useEffect(() => {
-    loadColumns()
-  }, [])
+    if (apiUrl) {
+      loadColumns()
+    }
+  }, [apiUrl])
 
   return (
     <div className="container mx-auto py-8 space-y-6">

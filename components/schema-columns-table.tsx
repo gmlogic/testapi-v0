@@ -25,6 +25,7 @@ export function SchemaColumnsTable({ columns, onEdit, onDelete, isLoading }: Sch
             <TableHead>Type</TableHead>
             <TableHead>Base Category</TableHead>
             <TableHead>Series ID</TableHead>
+            <TableHead>Priority</TableHead>
             <TableHead>Editable</TableHead>
             <TableHead>Values</TableHead>
             <TableHead className="text-right">Actions</TableHead>
@@ -33,7 +34,7 @@ export function SchemaColumnsTable({ columns, onEdit, onDelete, isLoading }: Sch
         <TableBody>
           {columns.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={9} className="text-center text-muted-foreground">
+              <TableCell colSpan={10} className="text-center text-muted-foreground">
                 No columns found
               </TableCell>
             </TableRow>
@@ -48,6 +49,7 @@ export function SchemaColumnsTable({ columns, onEdit, onDelete, isLoading }: Sch
                 </TableCell>
                 <TableCell>{column.baseCategory}</TableCell>
                 <TableCell>{column.seriesId || "-"}</TableCell>
+                <TableCell>{column.priority || "-"}</TableCell>
                 <TableCell>
                   <Badge variant={column.editable ? "default" : "outline"}>{column.editable ? "Yes" : "No"}</Badge>
                 </TableCell>

@@ -1,6 +1,6 @@
 import type { SchemaColumn, CreateSchemaColumn } from "@/types/schema-column"
 
-const API_BASE_URL = "https://www.alfaeorders.com:19443/erpapi/panel"
+let API_BASE_URL = "https://www.alfaeorders.com:19443/erpapi/panel" // fallback default
 
 export class ApiError extends Error {
   constructor(
@@ -17,6 +17,14 @@ async function handleResponse<T>(response: Response): Promise<T> {
     throw new ApiError(response.status, `HTTP error! status: ${response.status}`)
   }
   return response.json()
+}
+
+// Function to get the current API base URL
+export const getApiBaseUrl = () => API_BASE_URL
+
+// Function to set the API base URL from config
+export const setApiBaseUrl = (baseUrl: string) => {
+  API_BASE_URL = `${baseUrl}/erpapi/panel`
 }
 
 export const schemaColumnApi = {
@@ -49,6 +57,7 @@ export const schemaColumnApi = {
       columnId: id,
       baseCategory: column.baseCategory,
       seriesId: column.seriesId, // Don't default to 0, keep undefined/null
+      priority: column.priority,
       field: column.field,
       title: column.title,
       colType: column.colType,

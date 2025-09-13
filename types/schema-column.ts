@@ -2,6 +2,7 @@ export interface SchemaColumn {
   columnId: number
   baseCategory: number
   seriesId?: number | null // Allow null values for seriesId
+  priority?: number | null
   field: string
   title: string
   colType: string
@@ -12,6 +13,7 @@ export interface SchemaColumn {
 export interface CreateSchemaColumn {
   baseCategory: number
   seriesId?: number | null // Allow null values for seriesId
+  priority?: number | null
   field: string
   title: string
   colType: string

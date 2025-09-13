@@ -23,6 +23,7 @@ export function SchemaColumnForm({ column, onSubmit, onCancel, isLoading }: Sche
   const [formData, setFormData] = useState<CreateSchemaColumn>({
     baseCategory: 0,
     seriesId: null,
+    priority: null,
     field: "",
     title: "",
     colType: "string",
@@ -36,6 +37,7 @@ export function SchemaColumnForm({ column, onSubmit, onCancel, isLoading }: Sche
       setFormData({
         baseCategory: column.baseCategory || 0,
         seriesId: column.seriesId || null,
+        priority: column.priority || null,
         field: column.field || "",
         title: column.title || "",
         colType: column.colType || "string",
@@ -46,6 +48,7 @@ export function SchemaColumnForm({ column, onSubmit, onCancel, isLoading }: Sche
       setFormData({
         baseCategory: 0,
         seriesId: null,
+        priority: null,
         field: "",
         title: "",
         colType: "string",
@@ -63,7 +66,7 @@ export function SchemaColumnForm({ column, onSubmit, onCancel, isLoading }: Sche
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-3 gap-4">
         <div className="space-y-2">
           <Label htmlFor="baseCategory">Base Category</Label>
           <Input
@@ -82,6 +85,17 @@ export function SchemaColumnForm({ column, onSubmit, onCancel, isLoading }: Sche
             value={formData.seriesId || ""}
             onChange={(e) =>
               setFormData({ ...formData, seriesId: e.target.value ? Number.parseInt(e.target.value) : null })
+            }
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="priority">Priority (Optional)</Label>
+          <Input
+            id="priority"
+            type="number"
+            value={formData.priority || ""}
+            onChange={(e) =>
+              setFormData({ ...formData, priority: e.target.value ? Number.parseInt(e.target.value) : null })
             }
           />
         </div>
