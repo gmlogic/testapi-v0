@@ -25,19 +25,29 @@ export default function SchemaColumnsPage() {
 
   useEffect(() => {
     fetch("/config.json", { cache: "no-store" })
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) {
+          console.log(`[v0] Config.json not found (${res.status}), using fallback URL`)
+          throw new Error(`Config not available (${res.status})`)
+        }
+        const contentType = res.headers.get("content-type")
+        if (!contentType || !contentType.includes("application/json")) {
+          console.log("[v0] Config.json response is not JSON, using fallback URL")
+          throw new Error("Config response is not JSON")
+        }
+        return res.json()
+      })
       .then((cfg) => {
         setApiUrl(cfg.API_URL)
         setApiBaseUrl(cfg.API_URL)
         console.log("[v0] Loaded API URL from config:", cfg.API_URL)
       })
       .catch((err) => {
-        console.error("[v0] Failed to load config.json:", err)
-        toast({
-          title: "Warning",
-          description: "Failed to load API configuration, using default URL",
-          variant: "destructive",
-        })
+        console.log("[v0] Config.json not available, using fallback URL:", err.message)
+        const fallbackUrl = "https://www.alfaeorders.com:19443"
+        setApiUrl(fallbackUrl)
+        setApiBaseUrl(fallbackUrl)
+        console.log("[v0] Using fallback API URL:", fallbackUrl)
       })
   }, [])
 
