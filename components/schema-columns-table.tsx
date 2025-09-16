@@ -24,7 +24,7 @@ export function SchemaColumnsTable({ columns, onEdit, onDelete, isLoading }: Sch
             <TableHead>Title</TableHead>
             <TableHead>Type</TableHead>
             <TableHead>Base Category</TableHead>
-            <TableHead>Series ID</TableHead>
+            <TableHead>Series</TableHead>
             <TableHead>Priority</TableHead>
             <TableHead>Editable</TableHead>
             <TableHead>Values</TableHead>
@@ -47,8 +47,8 @@ export function SchemaColumnsTable({ columns, onEdit, onDelete, isLoading }: Sch
                 <TableCell>
                   <Badge variant="secondary">{column.colType}</Badge>
                 </TableCell>
-                <TableCell>{column.baseCategory}</TableCell>
-                <TableCell>{column.seriesId || "-"}</TableCell>
+                <TableCell>{column.basecategory}</TableCell>
+                <TableCell>{column.series || "-"}</TableCell>
                 <TableCell>{column.priority || "-"}</TableCell>
                 <TableCell>
                   <Badge variant={column.editable ? "default" : "outline"}>{column.editable ? "Yes" : "No"}</Badge>

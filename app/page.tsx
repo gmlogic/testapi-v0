@@ -19,7 +19,7 @@ export default function SchemaColumnsPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [editingColumn, setEditingColumn] = useState<SchemaColumn | null>(null)
-  const [currentFilters, setCurrentFilters] = useState<{ baseId?: number; seriesId?: number }>({})
+  const [currentFilters, setCurrentFilters] = useState<{ basecategory?: number; series?: number }>({})
   const [apiUrl, setApiUrl] = useState<string>("")
   const { toast } = useToast()
 
@@ -51,12 +51,12 @@ export default function SchemaColumnsPage() {
       })
   }, [])
 
-  const loadColumns = async (baseId?: number, seriesId?: number) => {
+  const loadColumns = async (basecategory?: number, series?: number) => {
     setIsLoading(true)
     try {
-      const data = await schemaColumnApi.getColumns(baseId, seriesId)
+      const data = await schemaColumnApi.getColumns(basecategory, series)
       setColumns(data)
-      setCurrentFilters({ baseId, seriesId })
+      setCurrentFilters({ basecategory, series })
     } catch (error) {
       console.error("Failed to load columns:", error)
       toast({
@@ -77,7 +77,7 @@ export default function SchemaColumnsPage() {
         description: "Column created successfully",
       })
       setIsDialogOpen(false)
-      await loadColumns(currentFilters.baseId, currentFilters.seriesId)
+      await loadColumns(currentFilters.basecategory, currentFilters.series)
     } catch (error) {
       console.error("Failed to create column:", error)
       toast({
@@ -104,7 +104,7 @@ export default function SchemaColumnsPage() {
       })
       setIsDialogOpen(false)
       setEditingColumn(null)
-      await loadColumns(currentFilters.baseId, currentFilters.seriesId)
+      await loadColumns(currentFilters.basecategory, currentFilters.series)
     } catch (error) {
       console.error("[v0] Failed to update column:", error)
       toast({
@@ -125,7 +125,7 @@ export default function SchemaColumnsPage() {
         title: "Success",
         description: "Column deleted successfully",
       })
-      await loadColumns(currentFilters.baseId, currentFilters.seriesId)
+      await loadColumns(currentFilters.basecategory, currentFilters.series)
     } catch (error) {
       console.error("Failed to delete column:", error)
       toast({
@@ -165,7 +165,7 @@ export default function SchemaColumnsPage() {
         <div className="flex space-x-2">
           <Button
             variant="outline"
-            onClick={() => loadColumns(currentFilters.baseId, currentFilters.seriesId)}
+            onClick={() => loadColumns(currentFilters.basecategory, currentFilters.series)}
             disabled={isLoading}
           >
             <RefreshCw className="h-4 w-4 mr-2" />

@@ -21,8 +21,8 @@ const COLUMN_TYPES = ["string", "number", "boolean", "date", "datetime", "text",
 
 export function SchemaColumnForm({ column, onSubmit, onCancel, isLoading }: SchemaColumnFormProps) {
   const [formData, setFormData] = useState<CreateSchemaColumn>({
-    baseCategory: 0,
-    seriesId: null,
+    basecategory: 0,
+    series: null,
     priority: null,
     field: "",
     title: "",
@@ -35,8 +35,8 @@ export function SchemaColumnForm({ column, onSubmit, onCancel, isLoading }: Sche
     if (column) {
       console.log("[v0] Loading column data into form:", column) // Added debug log
       setFormData({
-        baseCategory: column.baseCategory || 0,
-        seriesId: column.seriesId || null,
+        basecategory: column.basecategory || 0,
+        series: column.series || null,
         priority: column.priority || null,
         field: column.field || "",
         title: column.title || "",
@@ -46,8 +46,8 @@ export function SchemaColumnForm({ column, onSubmit, onCancel, isLoading }: Sche
       })
     } else {
       setFormData({
-        baseCategory: 0,
-        seriesId: null,
+        basecategory: 0,
+        series: null,
         priority: null,
         field: "",
         title: "",
@@ -68,23 +68,23 @@ export function SchemaColumnForm({ column, onSubmit, onCancel, isLoading }: Sche
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="grid grid-cols-3 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="baseCategory">Base Category</Label>
+          <Label htmlFor="basecategory">Base Category</Label>
           <Input
-            id="baseCategory"
+            id="basecategory"
             type="number"
-            value={formData.baseCategory}
-            onChange={(e) => setFormData({ ...formData, baseCategory: Number.parseInt(e.target.value) || 0 })}
+            value={formData.basecategory}
+            onChange={(e) => setFormData({ ...formData, basecategory: Number.parseInt(e.target.value) || 0 })}
             required
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="seriesId">Series ID (Optional)</Label>
+          <Label htmlFor="series">Series (Optional)</Label>
           <Input
-            id="seriesId"
+            id="series"
             type="number"
-            value={formData.seriesId || ""}
+            value={formData.series || ""}
             onChange={(e) =>
-              setFormData({ ...formData, seriesId: e.target.value ? Number.parseInt(e.target.value) : null })
+              setFormData({ ...formData, series: e.target.value ? Number.parseInt(e.target.value) : null })
             }
           />
         </div>

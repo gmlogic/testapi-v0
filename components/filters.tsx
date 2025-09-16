@@ -7,23 +7,23 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
 interface FiltersProps {
-  onFilter: (baseId?: number, seriesId?: number) => void
+  onFilter: (basecategory?: number, series?: number) => void
   isLoading?: boolean
 }
 
 export function Filters({ onFilter, isLoading }: FiltersProps) {
-  const [baseId, setBaseId] = useState<string>("")
-  const [seriesId, setSeriesId] = useState<string>("")
+  const [basecategory, setBasecategory] = useState<string>("")
+  const [series, setSeries] = useState<string>("")
 
   const handleFilter = () => {
-    const baseIdNum = baseId ? Number.parseInt(baseId) : undefined
-    const seriesIdNum = seriesId ? Number.parseInt(seriesId) : undefined
-    onFilter(baseIdNum, seriesIdNum)
+    const basecategoryNum = basecategory ? Number.parseInt(basecategory) : undefined
+    const seriesNum = series ? Number.parseInt(series) : undefined
+    onFilter(basecategoryNum, seriesNum)
   }
 
   const handleClear = () => {
-    setBaseId("")
-    setSeriesId("")
+    setBasecategory("")
+    setSeries("")
     onFilter()
   }
 
@@ -35,23 +35,23 @@ export function Filters({ onFilter, isLoading }: FiltersProps) {
       <CardContent>
         <div className="flex items-end space-x-4">
           <div className="space-y-2">
-            <Label htmlFor="filterBaseId">Base Category ID</Label>
+            <Label htmlFor="filterBasecategory">Base Category</Label>
             <Input
-              id="filterBaseId"
+              id="filterBasecategory"
               type="number"
-              value={baseId}
-              onChange={(e) => setBaseId(e.target.value)}
-              placeholder="Enter base category ID"
+              value={basecategory}
+              onChange={(e) => setBasecategory(e.target.value)}
+              placeholder="Enter base category"
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="filterSeriesId">Series ID</Label>
+            <Label htmlFor="filterSeries">Series</Label>
             <Input
-              id="filterSeriesId"
+              id="filterSeries"
               type="number"
-              value={seriesId}
-              onChange={(e) => setSeriesId(e.target.value)}
-              placeholder="Enter series ID"
+              value={series}
+              onChange={(e) => setSeries(e.target.value)}
+              placeholder="Enter series"
             />
           </div>
           <div className="space-x-2">
