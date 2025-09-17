@@ -45,8 +45,8 @@ function mapToBackendFields(data: CreateSchemaColumn) {
 function mapFromBackendFields(data: any): SchemaColumn {
   return {
     columnId: data.columnId || data.id, // Handle both columnId and id
-    basecategory: data.basecategory, // Use new field name directly
-    series: data.series, // Use new field name directly
+    basecategory: data.baseCategory, // Backend: baseCategory -> Frontend: basecategory
+    series: data.series, // Backend: series -> Frontend: series (no change needed)
     priority: data.priority,
     field: data.field,
     title: data.title,
