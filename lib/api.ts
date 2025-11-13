@@ -43,8 +43,16 @@ function mapToBackendFields(data: CreateSchemaColumn) {
 
 // Map backend field names to frontend field names
 function mapFromBackendFields(data: any): SchemaColumn {
-  const valuesString =
-    typeof data.values === "object" && data.values !== null ? JSON.stringify(data.values) : data.values || null
+  let valuesString: string | undefined
+
+  if (data.values) {
+    if (typeof data.values === "string") {
+      valuesString = data.values
+    } else if (typeof data.values === "object") {
+      // If it's an object, convert to JSON string
+      valuesString = JSON.stringify(data.values)
+    }
+  }
 
   return {
     columnId: data.columnId || data.id,
