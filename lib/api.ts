@@ -71,13 +71,14 @@ export const schemaColumnApi = {
   // GET: Fetch all columns with optional filters
   async getColumns(basecategory?: number, series?: number): Promise<SchemaColumn[]> {
     const params = new URLSearchParams()
-    if (basecategory !== undefined) params.append("basecategory", basecategory.toString())
+    if (basecategory !== undefined) params.append("baseCategory", basecategory.toString())
     if (series !== undefined) params.append("series", series.toString())
 
     const url = `${API_BASE_URL}/schema/columns${params.toString() ? `?${params.toString()}` : ""}`
-    console.log("[v0] API URL:", url)
+    console.log("[v0] API GET URL:", url)
     const response = await fetch(url)
     const data = await handleResponse<any[]>(response)
+    console.log("[v0] API Response data count:", data.length)
     return data.map(mapFromBackendFields)
   },
 
