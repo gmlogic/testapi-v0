@@ -53,8 +53,15 @@ export function SchemaColumnsTable({ columns, onEdit, onDelete, isLoading }: Sch
                 <TableCell>
                   <Badge variant={column.editable ? "default" : "outline"}>{column.editable ? "Yes" : "No"}</Badge>
                 </TableCell>
-                <TableCell className="max-w-32 truncate" title={column.values}>
-                  {column.values || "-"}
+                <TableCell
+                  className="max-w-32 truncate"
+                  title={typeof column.values === "string" ? column.values : JSON.stringify(column.values)}
+                >
+                  {typeof column.values === "string"
+                    ? column.values
+                    : column.values
+                      ? JSON.stringify(column.values)
+                      : "-"}
                 </TableCell>
                 <TableCell className="text-right">
                   <div className="flex justify-end space-x-2">
