@@ -49,9 +49,10 @@ function mapFromBackendFields(data: any): SchemaColumn {
     if (typeof data.values === "string") {
       valuesString = data.values
     } else if (typeof data.values === "object") {
-      // If it's an object, convert to JSON string
       valuesString = JSON.stringify(data.values)
     }
+  } else {
+    valuesString = undefined
   }
 
   return {
@@ -63,7 +64,7 @@ function mapFromBackendFields(data: any): SchemaColumn {
     title: data.title,
     colType: data.type || data.colType,
     editable: data.editable,
-    values: valuesString,
+    values: valuesString || "", // Always return string, never undefined
   }
 }
 
