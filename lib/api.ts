@@ -30,29 +30,32 @@ export const setApiBaseUrl = (baseUrl: string) => {
 // Map frontend field names to backend field names
 function mapToBackendFields(data: CreateSchemaColumn) {
   return {
-    baseCategory: data.basecategory, // Use new field name directly
-    series: data.series, // Use new field name directly
+    baseCategory: data.basecategory,
+    series: data.series,
     priority: data.priority,
     field: data.field,
     title: data.title,
-    colType: data.colType,
+    type: data.colType, // Map colType to type for backend
     editable: data.editable,
-    values: data.values,
+    values: typeof data.values === "string" ? data.values : data.values || null, // Handle values as string
   }
 }
 
 // Map backend field names to frontend field names
 function mapFromBackendFields(data: any): SchemaColumn {
+  const valuesString =
+    typeof data.values === "object" && data.values !== null ? JSON.stringify(data.values) : data.values || null
+
   return {
-    columnId: data.columnId || data.id, // Handle both columnId and id
-    basecategory: data.baseCategory, // Backend: baseCategory -> Frontend: basecategory
-    series: data.series, // Backend: series -> Frontend: series (no change needed)
+    columnId: data.columnId || data.id,
+    basecategory: data.baseCategory,
+    series: data.series,
     priority: data.priority,
     field: data.field,
     title: data.title,
-    colType: data.colType,
+    colType: data.type || data.colType,
     editable: data.editable,
-    values: data.values,
+    values: valuesString,
   }
 }
 

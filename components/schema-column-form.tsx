@@ -33,7 +33,7 @@ export function SchemaColumnForm({ column, onSubmit, onCancel, isLoading }: Sche
 
   useEffect(() => {
     if (column) {
-      console.log("[v0] Loading column data into form:", column) // Added debug log
+      console.log("[v0] Loading column data into form:", column)
       setFormData({
         basecategory: column.basecategory || 0,
         series: column.series || null,
@@ -42,7 +42,7 @@ export function SchemaColumnForm({ column, onSubmit, onCancel, isLoading }: Sche
         title: column.title || "",
         colType: column.colType || "string",
         editable: column.editable ?? true,
-        values: column.values || "",
+        values: typeof column.values === "string" ? column.values : column.values || "", // Convert values to string
       })
     } else {
       setFormData({
@@ -60,7 +60,7 @@ export function SchemaColumnForm({ column, onSubmit, onCancel, isLoading }: Sche
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    console.log("[v0] Form submission data:", formData) // Added debug log
+    console.log("[v0] Form submission data:", formData)
     await onSubmit(formData)
   }
 
@@ -152,7 +152,7 @@ export function SchemaColumnForm({ column, onSubmit, onCancel, isLoading }: Sche
         <Label htmlFor="values">Values (Optional)</Label>
         <Textarea
           id="values"
-          value={formData.values || ""}
+          value={typeof formData.values === "string" ? formData.values : formData.values || ""} // Ensure values is always a string
           onChange={(e) => setFormData({ ...formData, values: e.target.value })}
           placeholder="Enter comma-separated values for select types"
           rows={3}
