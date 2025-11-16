@@ -4,7 +4,7 @@ import type { SchemaColumn } from "@/types/schema-column"
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
-import { Edit, Trash2 } from "lucide-react"
+import { Edit, Trash2 } from 'lucide-react'
 
 interface SchemaColumnsTableProps {
   columns: SchemaColumn[]
@@ -27,6 +27,7 @@ export function SchemaColumnsTable({ columns, onEdit, onDelete, isLoading }: Sch
             <TableHead>Series</TableHead>
             <TableHead>Priority</TableHead>
             <TableHead>Editable</TableHead>
+            <TableHead>Required</TableHead>
             <TableHead>Values</TableHead>
             <TableHead className="text-right">Actions</TableHead>
           </TableRow>
@@ -34,7 +35,7 @@ export function SchemaColumnsTable({ columns, onEdit, onDelete, isLoading }: Sch
         <TableBody>
           {columns.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={10} className="text-center text-muted-foreground">
+              <TableCell colSpan={11} className="text-center text-muted-foreground">
                 No columns found
               </TableCell>
             </TableRow>
@@ -52,6 +53,9 @@ export function SchemaColumnsTable({ columns, onEdit, onDelete, isLoading }: Sch
                 <TableCell>{column.priority || "-"}</TableCell>
                 <TableCell>
                   <Badge variant={column.editable ? "default" : "outline"}>{column.editable ? "Yes" : "No"}</Badge>
+                </TableCell>
+                <TableCell>
+                  <Badge variant={column.required ? "default" : "outline"}>{column.required ? "Yes" : "No"}</Badge>
                 </TableCell>
                 <TableCell
                   className="max-w-32 truncate"

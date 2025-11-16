@@ -28,6 +28,7 @@ export function SchemaColumnForm({ column, onSubmit, onCancel, isLoading }: Sche
     title: "",
     colType: "string",
     editable: true,
+    required: 0,
     values: "",
   })
 
@@ -42,7 +43,8 @@ export function SchemaColumnForm({ column, onSubmit, onCancel, isLoading }: Sche
         title: column.title || "",
         colType: column.colType || "string",
         editable: column.editable ?? true,
-        values: typeof column.values === "string" ? column.values : column.values || "", // Convert values to string
+        required: column.required ?? 0,
+        values: typeof column.values === "string" ? column.values : column.values || "",
       })
     } else {
       setFormData({
@@ -53,6 +55,7 @@ export function SchemaColumnForm({ column, onSubmit, onCancel, isLoading }: Sche
         title: "",
         colType: "string",
         editable: true,
+        required: 0,
         values: "",
       })
     }
@@ -148,11 +151,20 @@ export function SchemaColumnForm({ column, onSubmit, onCancel, isLoading }: Sche
         <Label htmlFor="editable">Editable</Label>
       </div>
 
+      <div className="flex items-center space-x-2">
+        <Checkbox
+          id="required"
+          checked={formData.required === 1}
+          onCheckedChange={(checked) => setFormData({ ...formData, required: checked ? 1 : 0 })}
+        />
+        <Label htmlFor="required">Required</Label>
+      </div>
+
       <div className="space-y-2">
         <Label htmlFor="values">Values (Optional)</Label>
         <Textarea
           id="values"
-          value={typeof formData.values === "string" ? formData.values : formData.values || ""} // Ensure values is always a string
+          value={typeof formData.values === "string" ? formData.values : formData.values || ""}
           onChange={(e) => setFormData({ ...formData, values: e.target.value })}
           placeholder="Enter comma-separated values for select types"
           rows={3}
