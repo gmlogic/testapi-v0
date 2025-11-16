@@ -56,6 +56,9 @@ function mapFromBackendFields(data: any): SchemaColumn {
     valuesString = undefined
   }
 
+  const editable = typeof data.editable === "number" ? data.editable : (data.editable ? 1 : 0)
+  const required = typeof data.required === "number" ? data.required : (data.required ? 1 : 0)
+
   return {
     columnId: data.columnId || data.id,
     basecategory: data.baseCategory,
@@ -64,8 +67,8 @@ function mapFromBackendFields(data: any): SchemaColumn {
     field: data.field,
     title: data.title,
     colType: data.type || data.colType,
-    editable: data.editable,
-    required: typeof data.required === "number" ? data.required : (data.required ? 1 : 0), // ensure required is always a number (0 or 1)
+    editable: editable, // Convert to number
+    required: required, // Convert to number
     values: valuesString || "", // Always return string, never undefined
   }
 }
