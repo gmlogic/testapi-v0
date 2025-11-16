@@ -56,20 +56,35 @@ function mapFromBackendFields(data: any): SchemaColumn {
     valuesString = undefined
   }
 
-  const editable = typeof data.editable === "number" ? data.editable : (data.editable ? 1 : 0)
-  const required = typeof data.required === "number" ? data.required : (data.required ? 1 : 0)
+  const editable = (() => {
+    if (typeof data.editable === "number") return data.editable ? 1 : 0
+    if (typeof data.editable === "boolean") return data.editable ? 1 : 0
+    if (typeof data.editable === "object") return 0 // Default to 0 if it's an object
+    return 0
+  })()
+
+  const required = (() => {
+    if (typeof data.required === "number") return data.required ? 1 : 0
+    if (typeof data.required === "boolean") return data.required ? 1 : 0
+    if (typeof data.required === "object") return 0 // Default to 0 if it's an object
+    return 0
+  })()
+
+  const fieldString = typeof data.field === "string" ? data.field : (data.field || "")
+  const titleString = typeof data.title === "string" ? data.title : (data.title || "")
+  const typeString = typeof data.type === "string" ? data.type : (data.colType || "string")
 
   return {
     columnId: data.columnId || data.id,
-    basecategory: data.baseCategory,
-    series: data.series,
-    priority: data.priority,
-    field: data.field,
-    title: data.title,
-    colType: data.type || data.colType,
-    editable: editable, // Convert to number
-    required: required, // Convert to number
-    values: valuesString || "", // Always return string, never undefined
+    basecategory: typeof data.baseCategory === "number" ? data.baseCategory : 0,
+    series: typeof data.series === "number" ? data.series : 0,
+    priority: typeof data.priority === "number" ? data.priority : 0,
+    field: fieldString,
+    title: titleString,
+    colType: typeString,
+    editable,
+    required,
+    values: valuesString || "",
   }
 }
 
