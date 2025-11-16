@@ -37,7 +37,7 @@ function mapToBackendFields(data: CreateSchemaColumn) {
     title: data.title,
     type: data.colType, // Map colType to type for backend
     editable: data.editable,
-    required: data.required ? 1 : 0,
+    required: data.required, // required is already a bit (0 or 1), send it directly without conversion
     values: typeof data.values === "string" ? data.values : data.values || null, // Handle values as string
   }
 }
@@ -65,7 +65,7 @@ function mapFromBackendFields(data: any): SchemaColumn {
     title: data.title,
     colType: data.type || data.colType,
     editable: data.editable,
-    required: data.required,
+    required: typeof data.required === "number" ? data.required : (data.required ? 1 : 0), // ensure required is always a number (0 or 1)
     values: valuesString || "", // Always return string, never undefined
   }
 }
