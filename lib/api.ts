@@ -44,6 +44,13 @@ function mapToBackendFields(data: CreateSchemaColumn) {
 
 // Map backend field names to frontend field names
 function mapFromBackendFields(data: any): SchemaColumn {
+  console.log("[v0] Raw data from backend:", data)
+  
+  Object.keys(data).forEach(key => {
+    const value = data[key]
+    console.log(`[v0] Field "${key}": type=${typeof value}, value=${typeof value === 'object' ? JSON.stringify(value) : value}`)
+  })
+
   let valuesString: string | undefined
 
   if (data.values) {
@@ -59,14 +66,14 @@ function mapFromBackendFields(data: any): SchemaColumn {
   const editable = (() => {
     if (typeof data.editable === "number") return data.editable ? 1 : 0
     if (typeof data.editable === "boolean") return data.editable ? 1 : 0
-    if (typeof data.editable === "object") return 0 // Default to 0 if it's an object
+    if (typeof data.editable === "object") return 0
     return 0
   })()
 
   const required = (() => {
     if (typeof data.required === "number") return data.required ? 1 : 0
     if (typeof data.required === "boolean") return data.required ? 1 : 0
-    if (typeof data.required === "object") return 0 // Default to 0 if it's an object
+    if (typeof data.required === "object") return 0
     return 0
   })()
 
@@ -74,11 +81,16 @@ function mapFromBackendFields(data: any): SchemaColumn {
   const titleString = typeof data.title === "string" ? data.title : (data.title || "")
   const typeString = typeof data.type === "string" ? data.type : (data.colType || "string")
 
+  const basecategory = typeof data.baseCategory === "number" ? data.baseCategory : (typeof data.baseCategory === "object" ? 0 : parseInt(data.baseCategory) || 0)
+  const series = typeof data.series === "number" ? data.series : (typeof data.series === "object" ? 0 : parseInt(data.series) || 0)
+  const priority = typeof data.priority === "number" ? data.priority : (typeof data.priority === "object" ? 0 : parseInt(data.priority) || 0)
+  const columnId = typeof data.columnId === "number" ? data.columnId : (typeof data.id === "number" ? data.id : parseInt(data.columnId) || 0)
+
   return {
-    columnId: data.columnId || data.id,
-    basecategory: typeof data.baseCategory === "number" ? data.baseCategory : 0,
-    series: typeof data.series === "number" ? data.series : 0,
-    priority: typeof data.priority === "number" ? data.priority : 0,
+    columnId,
+    basecategory,
+    series,
+    priority,
     field: fieldString,
     title: titleString,
     colType: typeString,
