@@ -35,21 +35,34 @@ function mapToBackendFields(data: CreateSchemaColumn) {
     colType: data.colType,
     editable: data.editable === true,
     visible: data.visible === true,
+    required: data.required ?? 0,
     values: data.values,
   }
 }
 
 function mapFromBackendFields(data: any): SchemaColumn {
+  const columnId = typeof data.columnId === "number" ? data.columnId : (typeof data.id === "number" ? data.id : parseInt(data.columnId) || 0)
+  const basecategory = typeof data.baseCategory === "number" ? data.baseCategory : parseInt(data.baseCategory) || 0
+  const series = typeof data.series === "number" ? data.series : (data.series ? parseInt(data.series) : null)
+  const priority = typeof data.priority === "number" ? data.priority : (data.priority ? parseInt(data.priority) : null)
+
+  const required = (() => {
+    if (typeof data.required === "number") return data.required ? 1 : 0
+    if (typeof data.required === "boolean") return data.required ? 1 : 0
+    return 0
+  })()
+
   return {
-    columnId: data.columnId || data.id,
-    basecategory: data.baseCategory,
-    series: data.series,
-    priority: data.priority,
-    field: data.field,
-    title: data.title,
-    colType: data.colType,
-    editable: data.editable,
-    visible: data.visible,
+    columnId,
+    basecategory,
+    series,
+    priority,
+    field: data.field || "",
+    title: data.title || "",
+    colType: data.colType || data.type || "string",
+    editable: data.editable === true || data.editable === 1,
+    visible: data.visible === true || data.visible === 1,
+    required,
     values: data.values,
   }
 }
@@ -57,11 +70,11 @@ function mapFromBackendFields(data: any): SchemaColumn {
 export const schemaColumnApi = {
   async getColumns(basecategory?: number, series?: number): Promise<SchemaColumn[]> {
     const params = new URLSearchParams()
-    if (basecategory !== undefined) params.append("basecategory", basecategory.toString())
+    if (basecategory !== undefined) params.append("baseCategory", basecategory.toString())
     if (series !== undefined) params.append("series", series.toString())
 
     const url = `${API_BASE_URL}/schema/columns${params.toString() ? `?${params.toString()}` : ""}`
-    console.log("[v0] API URL:", url)
+    console.log("[v0] API GET URL:", url)
     const response = await fetch(url)
     const data = await handleResponse<any[]>(response)
     return data.map(mapFromBackendFields)

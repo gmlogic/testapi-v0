@@ -35,6 +35,7 @@ export function SchemaColumnForm({ column, onSubmit, onCancel, isLoading }: Sche
     colType: "string",
     editable: true,
     visible: true,
+    required: 0,
     values: "",
   })
 
@@ -49,6 +50,7 @@ export function SchemaColumnForm({ column, onSubmit, onCancel, isLoading }: Sche
         colType: column.colType || "string",
         editable: column.editable === true,
         visible: column.visible === true,
+        required: column.required ?? 0,
         values: valuesToString(column.values),
       })
     } else {
@@ -61,6 +63,7 @@ export function SchemaColumnForm({ column, onSubmit, onCancel, isLoading }: Sche
         colType: "string",
         editable: true,
         visible: true,
+        required: 0,
         values: "",
       })
     }
@@ -162,6 +165,14 @@ export function SchemaColumnForm({ column, onSubmit, onCancel, isLoading }: Sche
             onCheckedChange={(checked) => setFormData({ ...formData, visible: checked === true })}
           />
           <Label htmlFor="visible">Visible</Label>
+        </div>
+        <div className="flex items-center space-x-2">
+          <Checkbox
+            id="required"
+            checked={formData.required === 1}
+            onCheckedChange={(checked) => setFormData({ ...formData, required: checked ? 1 : 0 })}
+          />
+          <Label htmlFor="required">Required</Label>
         </div>
       </div>
 

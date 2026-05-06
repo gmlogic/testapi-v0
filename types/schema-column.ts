@@ -8,6 +8,7 @@ export interface SchemaColumn {
   colType: string
   editable?: boolean
   visible?: boolean
+  required?: number
   values?: string | Record<string, unknown> | Array<Record<string, unknown>>
 }
 
@@ -20,5 +21,6 @@ export interface CreateSchemaColumn {
   colType: string
   editable?: boolean
   visible?: boolean
+  required?: number
   values?: string | Record<string, unknown> | Array<Record<string, unknown>>
 }
