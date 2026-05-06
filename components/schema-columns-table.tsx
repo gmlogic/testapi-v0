@@ -13,6 +13,12 @@ interface SchemaColumnsTableProps {
   isLoading?: boolean
 }
 
+function displayValues(values: SchemaColumn["values"]): string {
+  if (values == null) return "-"
+  if (typeof values === "string") return values || "-"
+  return JSON.stringify(values)
+}
+
 export function SchemaColumnsTable({ columns, onEdit, onDelete, isLoading }: SchemaColumnsTableProps) {
   return (
     <div className="rounded-md border">
@@ -27,6 +33,7 @@ export function SchemaColumnsTable({ columns, onEdit, onDelete, isLoading }: Sch
             <TableHead>Series</TableHead>
             <TableHead>Priority</TableHead>
             <TableHead>Editable</TableHead>
+            <TableHead>Visible</TableHead>
             <TableHead>Values</TableHead>
             <TableHead className="text-right">Actions</TableHead>
           </TableRow>
@@ -34,7 +41,7 @@ export function SchemaColumnsTable({ columns, onEdit, onDelete, isLoading }: Sch
         <TableBody>
           {columns.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={10} className="text-center text-muted-foreground">
+              <TableCell colSpan={11} className="text-center text-muted-foreground">
                 No columns found
               </TableCell>
             </TableRow>
@@ -53,8 +60,11 @@ export function SchemaColumnsTable({ columns, onEdit, onDelete, isLoading }: Sch
                 <TableCell>
                   <Badge variant={column.editable ? "default" : "outline"}>{column.editable ? "Yes" : "No"}</Badge>
                 </TableCell>
-                <TableCell className="max-w-32 truncate" title={column.values}>
-                  {column.values || "-"}
+                <TableCell>
+                  <Badge variant={column.visible ? "default" : "outline"}>{column.visible ? "Yes" : "No"}</Badge>
+                </TableCell>
+                <TableCell className="max-w-32 truncate" title={displayValues(column.values)}>
+                  {displayValues(column.values)}
                 </TableCell>
                 <TableCell className="text-right">
                   <div className="flex justify-end space-x-2">

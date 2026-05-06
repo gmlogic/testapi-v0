@@ -19,45 +19,42 @@ async function handleResponse<T>(response: Response): Promise<T> {
   return response.json()
 }
 
-// Function to get the current API base URL
 export const getApiBaseUrl = () => API_BASE_URL
 
-// Function to set the API base URL from config
 export const setApiBaseUrl = (baseUrl: string) => {
   API_BASE_URL = `${baseUrl}/erpapi/panel`
 }
 
-// Map frontend field names to backend field names
 function mapToBackendFields(data: CreateSchemaColumn) {
   return {
-    baseCategory: data.basecategory, // Use new field name directly
-    series: data.series, // Use new field name directly
+    baseCategory: data.basecategory,
+    series: data.series,
     priority: data.priority,
     field: data.field,
     title: data.title,
     colType: data.colType,
-    editable: data.editable,
+    editable: data.editable === true,
+    visible: data.visible === true,
     values: data.values,
   }
 }
 
-// Map backend field names to frontend field names
 function mapFromBackendFields(data: any): SchemaColumn {
   return {
-    columnId: data.columnId || data.id, // Handle both columnId and id
-    basecategory: data.baseCategory, // Backend: baseCategory -> Frontend: basecategory
-    series: data.series, // Backend: series -> Frontend: series (no change needed)
+    columnId: data.columnId || data.id,
+    basecategory: data.baseCategory,
+    series: data.series,
     priority: data.priority,
     field: data.field,
     title: data.title,
     colType: data.colType,
     editable: data.editable,
+    visible: data.visible,
     values: data.values,
   }
 }
 
 export const schemaColumnApi = {
-  // GET: Fetch all columns with optional filters
   async getColumns(basecategory?: number, series?: number): Promise<SchemaColumn[]> {
     const params = new URLSearchParams()
     if (basecategory !== undefined) params.append("basecategory", basecategory.toString())
@@ -70,29 +67,25 @@ export const schemaColumnApi = {
     return data.map(mapFromBackendFields)
   },
 
-  // POST: Create new column
   async createColumn(column: CreateSchemaColumn): Promise<SchemaColumn> {
     const backendData = mapToBackendFields(column)
     console.log("[v0] Creating column with backend data:", backendData)
 
     const response = await fetch(`${API_BASE_URL}/schema/columns`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(backendData),
     })
     const data = await handleResponse<any>(response)
     return mapFromBackendFields(data)
   },
 
-  // PUT: Update existing column
   async updateColumn(id: number, column: CreateSchemaColumn): Promise<SchemaColumn> {
     const backendData = mapToBackendFields(column)
     const updateData = {
       columnId: id,
       ...backendData,
-      values: backendData.values || "",
+      values: backendData.values ?? null,
     }
 
     console.log("[v0] Updating column with ID:", id)
@@ -100,9 +93,7 @@ export const schemaColumnApi = {
 
     const response = await fetch(`${API_BASE_URL}/schema/columns/${id}`, {
       method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(updateData),
     })
 
@@ -119,7 +110,6 @@ export const schemaColumnApi = {
     return mapFromBackendFields(result)
   },
 
-  // DELETE: Delete column
   async deleteColumn(id: number): Promise<void> {
     const response = await fetch(`${API_BASE_URL}/schema/columns/${id}`, {
       method: "DELETE",

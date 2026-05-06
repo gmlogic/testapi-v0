@@ -19,6 +19,12 @@ interface SchemaColumnFormProps {
 
 const COLUMN_TYPES = ["string", "number", "boolean", "date", "datetime", "text", "select", "multiselect"]
 
+function valuesToString(values: SchemaColumn["values"]): string {
+  if (values == null) return ""
+  if (typeof values === "string") return values
+  return JSON.stringify(values, null, 2)
+}
+
 export function SchemaColumnForm({ column, onSubmit, onCancel, isLoading }: SchemaColumnFormProps) {
   const [formData, setFormData] = useState<CreateSchemaColumn>({
     basecategory: 0,
@@ -28,12 +34,12 @@ export function SchemaColumnForm({ column, onSubmit, onCancel, isLoading }: Sche
     title: "",
     colType: "string",
     editable: true,
+    visible: true,
     values: "",
   })
 
   useEffect(() => {
     if (column) {
-      console.log("[v0] Loading column data into form:", column) // Added debug log
       setFormData({
         basecategory: column.basecategory || 0,
         series: column.series || null,
@@ -41,8 +47,9 @@ export function SchemaColumnForm({ column, onSubmit, onCancel, isLoading }: Sche
         field: column.field || "",
         title: column.title || "",
         colType: column.colType || "string",
-        editable: column.editable ?? true,
-        values: column.values || "",
+        editable: column.editable === true,
+        visible: column.visible === true,
+        values: valuesToString(column.values),
       })
     } else {
       setFormData({
@@ -53,6 +60,7 @@ export function SchemaColumnForm({ column, onSubmit, onCancel, isLoading }: Sche
         title: "",
         colType: "string",
         editable: true,
+        visible: true,
         values: "",
       })
     }
@@ -60,7 +68,6 @@ export function SchemaColumnForm({ column, onSubmit, onCancel, isLoading }: Sche
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    console.log("[v0] Form submission data:", formData) // Added debug log
     await onSubmit(formData)
   }
 
@@ -139,20 +146,30 @@ export function SchemaColumnForm({ column, onSubmit, onCancel, isLoading }: Sche
         </Select>
       </div>
 
-      <div className="flex items-center space-x-2">
-        <Checkbox
-          id="editable"
-          checked={formData.editable}
-          onCheckedChange={(checked) => setFormData({ ...formData, editable: checked as boolean })}
-        />
-        <Label htmlFor="editable">Editable</Label>
+      <div className="flex items-center space-x-6">
+        <div className="flex items-center space-x-2">
+          <Checkbox
+            id="editable"
+            checked={formData.editable === true}
+            onCheckedChange={(checked) => setFormData({ ...formData, editable: checked === true })}
+          />
+          <Label htmlFor="editable">Editable</Label>
+        </div>
+        <div className="flex items-center space-x-2">
+          <Checkbox
+            id="visible"
+            checked={formData.visible === true}
+            onCheckedChange={(checked) => setFormData({ ...formData, visible: checked === true })}
+          />
+          <Label htmlFor="visible">Visible</Label>
+        </div>
       </div>
 
       <div className="space-y-2">
         <Label htmlFor="values">Values (Optional)</Label>
         <Textarea
           id="values"
-          value={formData.values || ""}
+          value={typeof formData.values === "string" ? formData.values : ""}
           onChange={(e) => setFormData({ ...formData, values: e.target.value })}
           placeholder="Enter comma-separated values for select types"
           rows={3}
