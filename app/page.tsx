@@ -7,12 +7,30 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { useToast } from "@/hooks/use-toast"
 import { Toaster } from "@/components/ui/toaster"
 import { Plus, RefreshCw } from "lucide-react"
-import { Filters } from "@/components/filters" // Import Filters component
-import { SchemaColumnsTable } from "@/components/schema-columns-table" // Import SchemaColumnsTable component
-import { SchemaColumnForm } from "@/components/schema-column-form" // Import SchemaColumnForm component
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Filters } from "@/components/filters"
+import { SchemaColumnsTable } from "@/components/schema-columns-table"
+import { SchemaColumnForm } from "@/components/schema-column-form"
 
 import type { SchemaColumn, CreateSchemaColumn } from "@/types/schema-column"
 import { schemaColumnApi, ApiError, setApiBaseUrl } from "@/lib/api"
+
+const API_SERVERS = {
+  remote: {
+    label: "Remote Server",
+    value: "https://www.alfaeorders.com:19443",
+  },
+  local: {
+    label: "Local Server",
+    value: "https://gmapi.kfertilizers.gr:19581",
+  },
+  testlocal: {
+    label: "test Local Server",
+    value: "http://192.168.10.108:29581",
+  },
+} as const
+
+type ServerKey = keyof typeof API_SERVERS
 
 export default function SchemaColumnsPage() {
   const [columns, setColumns] = useState<SchemaColumn[]>([])
@@ -21,6 +39,7 @@ export default function SchemaColumnsPage() {
   const [editingColumn, setEditingColumn] = useState<SchemaColumn | null>(null)
   const [currentFilters, setCurrentFilters] = useState<{ basecategory?: number; series?: number }>({})
   const [apiUrl, setApiUrl] = useState<string>("")
+  const [selectedServer, setSelectedServer] = useState<ServerKey>("testlocal")
   const { toast } = useToast()
 
   useEffect(() => {
@@ -44,12 +63,20 @@ export default function SchemaColumnsPage() {
       })
       .catch((err) => {
         console.log("[v0] Config.json not available, using fallback URL:", err.message)
-        const fallbackUrl = "https://www.alfaeorders.com:19443"
+        const fallbackUrl = API_SERVERS[selectedServer].value
         setApiUrl(fallbackUrl)
         setApiBaseUrl(fallbackUrl)
         console.log("[v0] Using fallback API URL:", fallbackUrl)
       })
   }, [])
+
+  const handleServerChange = (key: ServerKey) => {
+    setSelectedServer(key)
+    const url = API_SERVERS[key].value
+    setApiUrl(url)
+    setApiBaseUrl(url)
+    loadColumns(currentFilters.basecategory, currentFilters.series)
+  }
 
   const loadColumns = async (basecategory?: number, series?: number) => {
     setIsLoading(true)
@@ -162,7 +189,19 @@ export default function SchemaColumnsPage() {
           <h1 className="text-3xl font-bold">Schema Columns Management</h1>
           <p className="text-muted-foreground">Manage your database schema columns with full CRUD operations</p>
         </div>
-        <div className="flex space-x-2">
+        <div className="flex items-center space-x-2">
+          <Select value={selectedServer} onValueChange={(v) => handleServerChange(v as ServerKey)}>
+            <SelectTrigger className="w-48">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {(Object.keys(API_SERVERS) as ServerKey[]).map((key) => (
+                <SelectItem key={key} value={key}>
+                  {API_SERVERS[key].label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           <Button
             variant="outline"
             onClick={() => loadColumns(currentFilters.basecategory, currentFilters.series)}

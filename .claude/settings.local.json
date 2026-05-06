@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls -la \"e:\\\\sc\\\\nodeJS\\\\testapi-v0\\\\testapi-v0\\\\\" | head -50)",
+      "Read(//e/sc/nodeJS/testapi-v0/**)",
+      "Bash(powershell -Command \"Get-ChildItem -Path 'e:\\\\sc\\\\nodeJS\\\\testapi-v0\\\\testapi-v0' -Force | Select-Object -Property Name, Attributes | Format-Table\")",
+      "Bash(powershell -Command \"Get-ChildItem -Path 'e:\\\\sc\\\\nodeJS\\\\testapi-v0\\\\testapi-v0\\\\.claude' -Force | Select-Object -ExpandProperty Name\")",
+      "Bash(powershell -Command \"ls -la 'e:\\\\sc\\\\nodeJS\\\\testapi-v0\\\\testapi-v0\\\\postcss.config.mjs'\")",
+      "Bash(npm install *)",
+      "Bash(git add *)",
+      "Bash(git commit *)"
+    ]
+  }
+}

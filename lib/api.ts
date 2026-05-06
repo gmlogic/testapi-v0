@@ -1,6 +1,6 @@
 import type { SchemaColumn, CreateSchemaColumn } from "@/types/schema-column"
 
-let API_BASE_URL = "https://www.alfaeorders.com:19443/erpapi/panel" // fallback default
+let API_BASE_URL = "https://www.alfaeorders.com:19443/erpapi/panel"
 
 export class ApiError extends Error {
   constructor(
