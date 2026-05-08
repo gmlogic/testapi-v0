@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  basePath: "/api-schema-columns",
   eslint: {
     ignoreDuringBuilds: true,
   },

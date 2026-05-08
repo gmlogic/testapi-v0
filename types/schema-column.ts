@@ -1,3 +1,10 @@
+export interface CategoryItem {
+  id: number
+  name: string
+  priceC: number
+  imgUrl?: string
+}
+
 export interface SchemaColumn {
   columnId: number
   basecategory: number

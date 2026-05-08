@@ -8,7 +8,8 @@
       "Bash(powershell -Command \"ls -la 'e:\\\\sc\\\\nodeJS\\\\testapi-v0\\\\testapi-v0\\\\postcss.config.mjs'\")",
       "Bash(npm install *)",
       "Bash(git add *)",
-      "Bash(git commit *)"
+      "Bash(git commit *)",
+      "Bash(npm run *)"
     ]
   }
 }

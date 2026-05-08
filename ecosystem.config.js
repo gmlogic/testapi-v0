@@ -1,8 +1,8 @@
 module.exports = {
   apps: [
     {
-      name: "testapi-v0",
-      cwd: "/var/www/clients/client5/web21/home/gmlogict/testapi-v0",
+      name: "api-schema-columns",
+      cwd: "/var/www/clients/client5/web26/private/api-schema-columns",
       script: "npm",
       args: "start",
       env: {

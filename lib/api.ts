@@ -1,5 +1,6 @@
-import type { SchemaColumn, CreateSchemaColumn } from "@/types/schema-column"
+import type { SchemaColumn, CreateSchemaColumn, CategoryItem } from "@/types/schema-column"
 
+let API_SERVER_URL = "https://www.alfaeorders.com:19443"
 let API_BASE_URL = "https://www.alfaeorders.com:19443/erpapi/panel"
 
 export class ApiError extends Error {
@@ -22,7 +23,18 @@ async function handleResponse<T>(response: Response): Promise<T> {
 export const getApiBaseUrl = () => API_BASE_URL
 
 export const setApiBaseUrl = (baseUrl: string) => {
+  API_SERVER_URL = baseUrl
   API_BASE_URL = `${baseUrl}/erpapi/panel`
+}
+
+export async function getCategoryItems(category: number): Promise<CategoryItem[]> {
+  const pars = encodeURIComponent(JSON.stringify({ Company: 20, BOption: 70, JToken: { Category: String(category) } }))
+  const url = `${API_SERVER_URL}/erpapi/getitems/obj?pars=${pars}`
+  console.log("[v0] getCategoryItems calling:", url)
+  const response = await fetch(url)
+  const data = await handleResponse<CategoryItem[]>(response)
+  console.log("[v0] getCategoryItems response:", data)
+  return data
 }
 
 function mapToBackendFields(data: CreateSchemaColumn) {
@@ -35,8 +47,12 @@ function mapToBackendFields(data: CreateSchemaColumn) {
     colType: data.colType,
     editable: data.editable === true,
     visible: data.visible === true,
-    required: data.required ?? 0,
-    values: data.values,
+    required: data.required === 1 ? true : false,
+    values: data.values == null
+      ? null
+      : typeof data.values === "string"
+        ? data.values
+        : JSON.stringify(data.values),
   }
 }
 

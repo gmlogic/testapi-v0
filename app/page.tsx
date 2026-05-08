@@ -6,14 +6,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { useToast } from "@/hooks/use-toast"
 import { Toaster } from "@/components/ui/toaster"
-import { Plus, RefreshCw } from "lucide-react"
+import { Plus, RefreshCw, Wrench } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Filters } from "@/components/filters"
 import { SchemaColumnsTable } from "@/components/schema-columns-table"
 import { SchemaColumnForm } from "@/components/schema-column-form"
 
-import type { SchemaColumn, CreateSchemaColumn } from "@/types/schema-column"
-import { schemaColumnApi, ApiError, setApiBaseUrl } from "@/lib/api"
+import type { SchemaColumn, CreateSchemaColumn, CategoryItem } from "@/types/schema-column"
+import { schemaColumnApi, ApiError, setApiBaseUrl, getCategoryItems } from "@/lib/api"
 
 const API_SERVERS = {
   remote: {
@@ -34,6 +34,7 @@ type ServerKey = keyof typeof API_SERVERS
 
 export default function SchemaColumnsPage() {
   const [columns, setColumns] = useState<SchemaColumn[]>([])
+  const [categoryItems, setCategoryItems] = useState<CategoryItem[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [editingColumn, setEditingColumn] = useState<SchemaColumn | null>(null)
@@ -82,7 +83,13 @@ export default function SchemaColumnsPage() {
     setIsLoading(true)
     try {
       const data = await schemaColumnApi.getColumns(basecategory, series)
+      const uniqueCategories = basecategory !== undefined
+        ? [basecategory]
+        : [...new Set(data.map((c) => c.basecategory).filter((v) => v != null))]
+      const itemArrays = await Promise.all(uniqueCategories.map((cat) => getCategoryItems(cat)))
+      const items = itemArrays.flat()
       setColumns(data)
+      setCategoryItems(items)
       setCurrentFilters({ basecategory, series })
     } catch (error) {
       console.error("Failed to load columns:", error)
@@ -164,6 +171,93 @@ export default function SchemaColumnsPage() {
     }
   }
 
+  const handleFixFromSeries = async () => {
+    const { basecategory, series } = currentFilters
+    if (basecategory === undefined || series === undefined) return
+
+    const refItem = categoryItems.find((i) => i.id === series)
+    const groupSeriesIds = refItem
+      ? categoryItems.filter((i) => i.priceC === refItem.priceC && i.id !== series).map((i) => i.id)
+      : []
+
+    const confirmed = confirm(
+      `Θα ενημερωθούν τα πεδία priority, colType, editable, required, visible\nσε ${groupSeriesIds.length} σειρές του group ${refItem?.priceC ?? ""}.\n\nΣυνέχεια;`
+    )
+    if (!confirmed) return
+
+    setIsLoading(true)
+    try {
+      const allColumns = await schemaColumnApi.getColumns(basecategory)
+      const refMap = new Map(columns.map((c) => [c.field, c]))
+      const toUpdate = allColumns.filter(
+        (c) => c.series != null && groupSeriesIds.includes(c.series) && refMap.has(c.field)
+      )
+
+      let successCount = 0
+      let errorCount = 0
+      for (const col of toUpdate) {
+        const ref = refMap.get(col.field)!
+        try {
+          await schemaColumnApi.updateColumn(col.columnId, {
+            basecategory: col.basecategory,
+            series: col.series ?? undefined,
+            priority: ref.priority,
+            field: col.field,
+            title: col.title,
+            colType: ref.colType,
+            editable: ref.editable,
+            visible: ref.visible,
+            required: ref.required,
+            values: col.values,
+          })
+          successCount++
+        } catch {
+          errorCount++
+        }
+      }
+
+      toast({
+        title: errorCount === 0 ? "Success" : "Partial success",
+        description: `Ενημερώθηκαν ${successCount} records${errorCount > 0 ? `, ${errorCount} απέτυχαν` : ""}`,
+        variant: errorCount === 0 ? "default" : "destructive",
+      })
+      await loadColumns(basecategory, series)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleCopyToGroup = async (column: SchemaColumn, targetSeries: number[]) => {
+    setIsLoading(true)
+    let successCount = 0
+    let errorCount = 0
+    for (const seriesId of targetSeries) {
+      try {
+        await schemaColumnApi.createColumn({
+          basecategory: column.basecategory,
+          series: seriesId,
+          priority: column.priority,
+          field: column.field,
+          title: column.title,
+          colType: column.colType,
+          editable: column.editable,
+          visible: column.visible,
+          required: column.required,
+          values: column.values,
+        })
+        successCount++
+      } catch {
+        errorCount++
+      }
+    }
+    toast({
+      title: errorCount === 0 ? "Success" : "Partial success",
+      description: `Δημιουργήθηκαν ${successCount} αντίγραφα${errorCount > 0 ? `, ${errorCount} απέτυχαν` : ""}`,
+      variant: errorCount === 0 ? "default" : "destructive",
+    })
+    await loadColumns(currentFilters.basecategory, currentFilters.series)
+  }
+
   const handleEdit = (column: SchemaColumn) => {
     console.log("[v0] Edit button clicked for column:", column)
     console.log("[v0] Column ID:", column.columnId)
@@ -221,13 +315,23 @@ export default function SchemaColumnsPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Schema Columns ({columns.length})</CardTitle>
+          <div className="flex items-center justify-between">
+            <CardTitle>Schema Columns ({columns.length})</CardTitle>
+            {currentFilters.series !== undefined && (
+              <Button variant="outline" size="sm" onClick={handleFixFromSeries} disabled={isLoading}>
+                <Wrench className="h-4 w-4 mr-2" />
+                Fix from selected series
+              </Button>
+            )}
+          </div>
         </CardHeader>
         <CardContent>
           <SchemaColumnsTable
             columns={columns}
+            categoryItems={categoryItems}
             onEdit={handleEdit}
             onDelete={handleDeleteColumn}
+            onCopyToGroup={handleCopyToGroup}
             isLoading={isLoading}
           />
         </CardContent>
