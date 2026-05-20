@@ -8,10 +8,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
 interface FiltersProps {
   onFilter: (basecategory?: number, series?: number) => void
+  onSeriesInputChange?: (value: string) => void
   isLoading?: boolean
 }
 
-export function Filters({ onFilter, isLoading }: FiltersProps) {
+export function Filters({ onFilter, onSeriesInputChange, isLoading }: FiltersProps) {
   const [basecategory, setBasecategory] = useState<string>("")
   const [series, setSeries] = useState<string>("")
 
@@ -24,6 +25,7 @@ export function Filters({ onFilter, isLoading }: FiltersProps) {
   const handleClear = () => {
     setBasecategory("")
     setSeries("")
+    onSeriesInputChange?.("")
     onFilter()
   }
 
@@ -50,7 +52,7 @@ export function Filters({ onFilter, isLoading }: FiltersProps) {
               id="filterSeries"
               type="number"
               value={series}
-              onChange={(e) => setSeries(e.target.value)}
+              onChange={(e) => { setSeries(e.target.value); onSeriesInputChange?.(e.target.value) }}
               placeholder="Enter series"
             />
           </div>

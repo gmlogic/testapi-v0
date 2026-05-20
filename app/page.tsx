@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { useToast } from "@/hooks/use-toast"
 import { Toaster } from "@/components/ui/toaster"
-import { Plus, RefreshCw, Wrench } from "lucide-react"
+import { Calculator, Plus, RefreshCw, Wrench } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Filters } from "@/components/filters"
 import { SchemaColumnsTable } from "@/components/schema-columns-table"
@@ -39,6 +39,7 @@ export default function SchemaColumnsPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [editingColumn, setEditingColumn] = useState<SchemaColumn | null>(null)
   const [currentFilters, setCurrentFilters] = useState<{ basecategory?: number; series?: number }>({})
+  const [seriesInputValue, setSeriesInputValue] = useState<string>("")
   const [apiUrl, setApiUrl] = useState<string>("")
   const [selectedServer, setSelectedServer] = useState<ServerKey>("testlocal")
   const { toast } = useToast()
@@ -311,15 +312,15 @@ export default function SchemaColumnsPage() {
         </div>
       </div>
 
-      <Filters onFilter={loadColumns} isLoading={isLoading} />
+      <Filters onFilter={loadColumns} onSeriesInputChange={setSeriesInputValue} isLoading={isLoading} />
 
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle>Schema Columns ({columns.length})</CardTitle>
-            {currentFilters.series !== undefined && (
+            {seriesInputValue !== "" && (
               <Button variant="outline" size="sm" onClick={handleFixFromSeries} disabled={isLoading}>
-                <Wrench className="h-4 w-4 mr-2" />
+                <Calculator className="h-4 w-4 mr-2" />
                 Fix from selected series
               </Button>
             )}
